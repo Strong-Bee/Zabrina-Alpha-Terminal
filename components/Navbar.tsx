@@ -43,11 +43,6 @@ export default function Navbar() {
         return () => clearInterval(id);
     }, []);
 
-    // Close mobile on route change
-    useEffect(() => {
-        setMobileOpen(false);
-    }, [pathname]);
-
     // Prevent body scroll when mobile menu open
     useEffect(() => {
         document.body.style.overflow = mobileOpen ? 'hidden' : '';
