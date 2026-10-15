@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { NewsCategory, NewsItem } from './types';
+import type { NewsItem } from './types';
 import NewsCategoryTabs from './NewsCategoryTabs';
 import NewsFilters from './NewsFilters';
 import NewsList from './NewsList';
@@ -38,7 +38,8 @@ export default function NewsPage() {
 
     // Load when category changes
     useEffect(() => {
-        fetchNews(category);
+        const id = window.setTimeout(() => { void fetchNews(category); }, 0);
+        return () => window.clearTimeout(id);
     }, [category]);
 
     // Auto-refresh every 5 minutes
@@ -62,10 +63,7 @@ export default function NewsPage() {
 
     const formatLastUpdate = () => {
         if (!lastUpdate) return '—';
-        const diff = Math.floor((Date.now() - lastUpdate.getTime()) / 60000);
-        if (diff < 1) return 'Baru saja';
-        if (diff < 60) return `${diff} menit lalu`;
-        return `${Math.floor(diff / 60)} jam lalu`;
+        return lastUpdate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     };
 
     return (
@@ -74,7 +72,7 @@ export default function NewsPage() {
             <header className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-za-border/60 pb-6">
                 <div>
                     <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-za-accent">
-                        // Market Intelligence
+                        Market Intelligence
                     </div>
                     <h1 className="text-display text-3xl text-white md:text-5xl">
                         <i className="fas fa-newspaper mr-2 text-za-accent" />
