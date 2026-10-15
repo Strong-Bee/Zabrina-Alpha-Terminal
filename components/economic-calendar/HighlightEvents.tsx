@@ -84,20 +84,9 @@ function HighlightCard({ event }: { event: EconomicEvent }) {
     let timeLabel = '';
     try {
         const dateObj = new Date(event.date);
-        const diff = dateObj.getTime() - Date.now();
-        const diffHours = Math.round(diff / 3600000);
-        const diffDays = Math.round(diff / 86400000);
-
-        if (diff < 0) {
-            const absHours = Math.abs(diffHours);
-            if (absHours < 1) timeLabel = 'Rilis baru saja';
-            else if (absHours < 24) timeLabel = `Rilis ${absHours} jam lalu`;
-            else timeLabel = `Rilis ${Math.abs(diffDays)} hari lalu`;
-        } else {
-            if (diffHours < 1) timeLabel = 'Rilis dalam < 1 jam';
-            else if (diffHours < 24) timeLabel = `Rilis dalam ${diffHours} jam`;
-            else timeLabel = `Rilis dalam ${diffDays} hari`;
-        }
+        timeLabel = Number.isNaN(dateObj.getTime())
+            ? 'Waktu tidak tersedia'
+            : dateObj.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
     } catch { }
 
     return (
