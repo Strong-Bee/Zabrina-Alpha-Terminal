@@ -87,7 +87,12 @@ export default function MemeCoinScanner() {
   }, [minLiquidity, minVolume, maxAgeHours, minTxns, sort]);
 
   useEffect(() => {
-    void loadPairs();
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) return loadPairs();
+      return undefined;
+    });
+    return () => { active = false; };
   }, [loadPairs, refreshCount]);
 
   const copyAddress = async (address: string) => {
