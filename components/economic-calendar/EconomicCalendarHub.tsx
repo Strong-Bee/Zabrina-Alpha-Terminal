@@ -35,7 +35,7 @@ export default function EconomicCalendarHub() {
     }, []);
 
     const lastUpdateText = lastUpdate
-        ? `${Math.floor((Date.now() - lastUpdate.getTime()) / 60000)} menit lalu`
+        ? `Diperbarui ${lastUpdate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
         : 'Memuat...';
 
     return (
