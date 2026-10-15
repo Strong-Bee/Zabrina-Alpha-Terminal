@@ -23,15 +23,16 @@ const PRESETS: { value: RangePreset; label: string; icon: string }[] = [
 ];
 
 export default function DateFilter({ onApply, isLoading }: DateFilterProps) {
+    const [initialRange] = useState(() => getPresetRange('today'));
     const [preset, setPreset] = useState<RangePreset>('today');
-    const [from, setFrom] = useState<Date>(new Date());
-    const [to, setTo] = useState<Date>(new Date());
+    const [from, setFrom] = useState<Date>(initialRange.from);
+    const [to, setTo] = useState<Date>(initialRange.to);
 
     useEffect(() => {
-        const { from: f, to: t } = getPresetRange('today');
-        setFrom(f);
-        setTo(t);
-        onApply(f, t);
+        const { from: f, to: t } = initialRange;
+        const id = window.setTimeout(() => onApply(f, t), 0);
+        return () => window.clearTimeout(id);
+        // Initial range should be applied once on mount.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
