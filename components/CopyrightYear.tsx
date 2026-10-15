@@ -6,7 +6,8 @@ export default function CopyrightYear() {
     const [year, setYear] = useState<number | null>(null);
 
     useEffect(() => {
-        setYear(new Date().getFullYear());
+        const id = window.setTimeout(() => setYear(new Date().getFullYear()), 0);
+        return () => window.clearTimeout(id);
     }, []);
 
     if (year === null) {
