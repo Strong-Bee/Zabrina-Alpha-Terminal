@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import ClockDisplay from '@/components/ClockDisplay';
 
 export const metadata: Metadata = {
   title: 'ZABRINA ALPHA TERMINAL — Professional Trading Intelligence',
@@ -93,7 +92,7 @@ export default function HomePage() {
         <section id="features" className="mb-24">
           <header className="mb-10">
             <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-za-accent">
-                            // Core Modules
+                            CORE MODULES
             </div>
             <h2 className="text-display max-w-2xl text-3xl text-white md:text-5xl">
               Semua yang Anda butuhkan untuk trading
