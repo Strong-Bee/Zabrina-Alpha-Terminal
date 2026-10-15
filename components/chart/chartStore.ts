@@ -23,14 +23,14 @@ interface ChartState {
 
 export const useChartStore = create<ChartState>((set) => ({
     symbol: 'BTCUSDT',
-    timeframe: '1d',
+    timeframe: '4h',
     setSymbol: (s) => set({ symbol: s }),
     setTimeframe: (tf) => set({ timeframe: tf }),
 
     chartType: 'candlestick',
     setChartType: (t) => set({ chartType: t }),
 
-    indicators: [], // ← WAJIB: array kosong default
+    indicators: [],
     toggleIndicator: (id) =>
         set((state) => ({
             indicators: state.indicators.includes(id)
