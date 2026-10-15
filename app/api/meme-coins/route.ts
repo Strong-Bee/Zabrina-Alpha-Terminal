@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
-export const revalidate = 30;
-
 const DEX_API = 'https://api.dexscreener.com';
 const MAX_TOKENS = 30;
 const REQUEST_TIMEOUT_MS = 8_000;
