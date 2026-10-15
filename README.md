@@ -1,8 +1,6 @@
 # Zabrina Alpha Terminal
 
-**Terminal intelijen pasar multi-aset** untuk memantau harga, membaca chart, mengikuti berita, dan menyusun riset pasar dalam satu workspace.
-
-> Status: proyek aktif dalam pengembangan. Ketersediaan setiap modul bergantung pada implementasi di branch saat ini dan layanan data eksternal. Jangan menganggap roadmap sebagai fitur produksi.
+**Crypto & Meme Coin Intelligence Terminal** — workspace riset aset kripto yang berfokus pada charting, market data, on-chain intelligence, dan penemuan meme coin. Sasaran utamanya adalah membantu trader mengamati pasar, mengevaluasi risiko token, serta menelusuri data dari sumber aslinya.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.4-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-149eca?logo=react)](https://react.dev/)
@@ -10,71 +8,87 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06b6d4?logo=tailwindcss)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+> **Status:** aktif dikembangkan. Daftar modul di bawah adalah arah produk; hanya fitur yang sudah diimplementasikan dan teruji pada branch aktif yang boleh dianggap tersedia. Tidak ada jaminan profit atau akurasi sinyal.
+
 ## Daftar isi
 
-- [Tujuan proyek](#tujuan-proyek)
-- [Modul produk](#modul-produk)
-- [Teknologi](#teknologi)
+- [Visi](#visi)
+- [Cakupan produk](#cakupan-produk)
+- [Stack teknologi](#stack-teknologi)
 - [Mulai lokal](#mulai-lokal)
 - [Konfigurasi](#konfigurasi)
-- [Perintah pengembangan](#perintah-pengembangan)
+- [Prinsip data pasar](#prinsip-data-pasar)
 - [Arsitektur](#arsitektur)
-- [Sumber data dan batasan](#sumber-data-dan-batasan)
-- [Keamanan](#keamanan)
 - [Roadmap](#roadmap)
+- [Keamanan](#keamanan)
 - [Kontribusi](#kontribusi)
-- [Disclaimer](#disclaimer)
+- [Disclaimer risiko](#disclaimer-risiko)
 - [Lisensi](#lisensi)
 
-## Tujuan proyek
+## Visi
 
-Zabrina Alpha Terminal dikembangkan sebagai antarmuka riset pasar yang menyatukan beberapa kelas aset dan konteks makro. Sasaran jangka panjangnya mencakup crypto, saham, forex, komoditas, indeks, berita, indikator ekonomi, analitik kuantitatif, on-chain, serta alat manajemen risiko. Integrasi harus diberi label berdasarkan sumber, waktu pembaruan, dan status ketersediaannya.
+Zabrina Alpha Terminal bukan terminal multi-aset umum. Produk ini dikhususkan untuk **cryptocurrency**, terutama pasar spot/perpetual dan meme coin lintas jaringan. Prioritas desainnya adalah data yang cepat, sumber yang dapat ditelusuri, filter yang dapat dikonfigurasi, serta penjelasan risiko yang tidak menyesatkan.
 
-## Modul produk
+## Cakupan produk
 
-### Chart workspace — `/chart`
+### 1. Crypto market terminal
 
-- Workspace chart dengan fokus pada tampilan penuh.
-- Memulai dari simbol **BTCUSDT** dan timeframe **4H** sebagai default produk.
-- Target historis hingga 600 candle, jika endpoint penyedia mendukung dan batas API mengizinkan.
-- Desain untuk pergantian simbol/timeframe, watchlist, harga, dan data streaming.
-- Kode chart harus menangani loading, error, data kosong, reconnect, dan cleanup koneksi.
+- Chart candlestick, pergantian simbol, dan multi-timeframe.
+- Harga, perubahan 24 jam, volume, watchlist, dan ticker streaming.
+- Target awal: pasangan Binance spot seperti BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT, BNBUSDT, ADAUSDT, AVAXUSDT, LINKUSDT, dan pasangan lain yang tersedia.
+- Rencana perluasan: market overview lintas exchange, funding rate, open interest, order book, trade tape, dan data likuidasi melalui provider yang sesuai.
 
-### Kalender ekonomi — `/economic-calendar`
+### 2. Meme coin scanner
 
-- Agenda ekonomi dan konteks indikator makro.
-- Filter dampak/status dan informasi waktu event bila tersedia dari sumber.
-- Nilai forecast, previous, dan actual harus menyertakan sumber; jangan mengisi angka yang tidak tersedia dengan data rekaan.
+- Menemukan token/pair baru melalui integrasi data yang tersedia.
+- Filter usia pair, likuiditas, volume, transaksi buy/sell, perubahan harga, dan market cap/FDV jika sumber menyediakannya.
+- Pantau perubahan volume dan momentum tanpa menganggapnya sebagai bukti profitabilitas.
+- Dukungan jaringan diprioritaskan bertahap: **Solana terlebih dahulu**, lalu jaringan EVM sesuai kebutuhan dan kualitas sumber.
+- Integrasi kandidat dapat mencakup DEX Screener dan API blockchain/provider lain; batas rate, lisensi, dan ketepatan data wajib diperhatikan.
 
-### Berita — `/news`
+### 3. On-chain intelligence dan wallet tracking
 
-- Agregasi berita dari sumber yang dapat diakses.
-- Kategori, pencarian, penyaringan, dan penanganan feed yang gagal.
-- Konten tetap milik penerbit asal; tampilkan atribusi dan tautan sumber.
+- Detail token, pair, transaksi, holder, dan aktivitas wallet bila tersedia dari explorer/provider.
+- Pantau wallet tertentu, transaksi whale, serta pembeli awal.
+- Analisis riwayat PnL wallet hanya bila perhitungan dapat direproduksi dari data transaksi yang memadai.
+- Tampilkan chain, alamat, periode analisis, waktu pembaruan, transaksi sumber, dan metodologi.
+- Jangan melabeli wallet sebagai profitable berdasarkan satu transaksi, saldo token yang belum direalisasikan, atau data yang tidak lengkap.
 
-### Landing page — `/`
+### 4. Token risk research
 
-- Ringkasan produk dan akses menuju modul utama.
-- Angka harga dan ticker hanya boleh ditampilkan sebagai live jika benar-benar berasal dari feed yang aktif; data contoh harus diberi label demo.
+- Pemeriksaan likuiditas, konsentrasi holder, usia kontrak/pair, aktivitas deployer, dan perubahan likuiditas jika data mendukung.
+- Untuk token EVM, evaluasi izin kontrak dan fungsi berisiko bila tersedia; untuk Solana, periksa authority/metadata dan indikator khusus jaringan bila provider mendukung.
+- Tandai data yang tidak tersedia sebagai **unknown**, bukan aman.
+- Indikator risiko adalah alat bantu riset, bukan jaminan bahwa token aman atau scam.
 
-### Cakupan riset berikutnya
+### 5. Trading intelligence
 
-AI research assistant, ringkasan berita dengan sitasi, makro global, analitik quant, on-chain, scanner peluang, portfolio/risk analytics, alert, dan personalisasi watchlist direncanakan bertahap. Modul yang belum terhubung ke data nyata tidak boleh dipresentasikan sebagai sinyal atau analisis terverifikasi.
+- Indikator teknikal dan struktur pasar: trend, support/resistance, BOS/CHOCH, FVG, order block, dan volume.
+- Alert harga, volume, volatilitas, dan kondisi scanner.
+- Paper trading, jurnal, portfolio, PnL, exposure, dan kalkulasi risk/reward sebagai modul bertahap.
+- AI research untuk meringkas data dengan referensi, memisahkan fakta dari inferensi, dan menyatakan ketidakpastian.
+- Eksekusi order live bukan asumsi default; integrasi trading harus memiliki persetujuan eksplisit, proteksi kredensial, batas risiko, dan pengujian terpisah.
 
-## Teknologi
+### 6. Berita dan katalis crypto
 
-- **Next.js App Router**, React, TypeScript strict mode
-- **Tailwind CSS v4**
-- **lightweight-charts** untuk visualisasi chart yang dibangun sendiri
-- **Zustand** untuk state client yang memang perlu dibagi
-- **Binance Public API/WebSocket** untuk data pasar crypto publik
-- **ESLint** untuk pemeriksaan kualitas kode
+- Agregasi berita aset kripto, pengumuman protokol, exchange, unlock, listing, dan peristiwa jaringan dari sumber yang dapat diverifikasi.
+- Setiap item perlu mencantumkan penerbit, waktu, serta tautan sumber.
+- Kalender makro hanya disertakan sebagai konteks yang memengaruhi pasar crypto, bukan sebagai arah produk utama.
 
-Versi dependensi aktual ditentukan oleh `package.json` dan lockfile. Jangan memperbarui lockfile secara manual; gunakan npm untuk menyelaraskannya setelah perubahan dependensi.
+## Stack teknologi
+
+- Next.js App Router, React, TypeScript strict mode.
+- Tailwind CSS v4.
+- lightweight-charts untuk chart custom.
+- Zustand untuk state UI bersama.
+- Binance public REST/WebSocket untuk data pasar crypto yang didukung.
+- ESLint dan TypeScript untuk pemeriksaan kualitas kode.
+
+Versi dependensi aktual tercatat di `package.json` dan `package-lock.json`. Integrasi lain hanya boleh diklaim tersedia setelah kode dan pengujiannya ada.
 
 ## Mulai lokal
 
-Persyaratan: Node.js versi LTS yang kompatibel dengan versi Next.js di `package.json`, serta npm.
+Persyaratan: versi Node.js LTS yang kompatibel dengan Next.js di repository dan npm.
 
 ```bash
 git clone https://github.com/Strong-Bee/Zabrina-Alpha-Terminal.git
@@ -85,13 +99,11 @@ npm run dev
 
 Buka [http://localhost:3000](http://localhost:3000).
 
-Jika `npm ci` gagal, periksa versi Node.js/npm dan pastikan `package.json` serta `package-lock.json` berasal dari commit yang sama. Jangan menghapus lockfile sebagai solusi pertama.
-
 ## Konfigurasi
 
-Salin `.env.example` menjadi `.env.local` jika diperlukan. Variabel pada contoh adalah opsional kecuali suatu modul menyatakannya wajib. Jangan pernah commit token, API key, kredensial, atau file `.env.local`.
+Salin `.env.example` menjadi `.env.local` hanya jika integrasi yang digunakan membutuhkan konfigurasi. Jangan commit file environment lokal, API key, seed phrase, private key, wallet secret, atau kredensial exchange.
 
-Aplikasi yang memakai endpoint publik sebaiknya tidak memerlukan rahasia server. Jika kelak ada provider yang memerlukan key, akses key hanya dari server-side route dan validasi input request.
+Kunci provider harus berada di server-side. Data publik yang tidak membutuhkan rahasia sebaiknya menggunakan endpoint publik resmi dan mematuhi batas rate provider.
 
 ## Perintah pengembangan
 
@@ -103,76 +115,42 @@ npm run build      # build produksi
 npm run start      # jalankan build produksi
 ```
 
-Sebelum membuat pull request, jalankan lint, typecheck, dan build. CI menggunakan pemeriksaan otomatis yang sama.
+Sebelum pull request, jalankan lint, typecheck, dan build. Keberhasilan CI harus diverifikasi dari hasil workflow GitHub, bukan diasumsikan dari keberadaan file konfigurasi.
+
+## Prinsip data pasar
+
+1. **Sumber dan freshness:** tampilkan provider dan waktu pembaruan; bedakan live, tertunda, stale, dan demo.
+2. **Normalisasi:** validasi alamat token, chain, simbol, timestamp, angka desimal, dan satuan sebelum digunakan.
+3. **Rate limits:** hormati kuota, gunakan cache, timeout, retry dengan backoff, serta concurrency limit.
+4. **Harga dan market cap:** jelaskan sumber dan metode kalkulasi. Market cap, FDV, dan liquidity bukan metrik yang dapat dipertukarkan.
+5. **Wallet PnL:** bedakan realized/unrealized PnL, biaya transaksi, transfer internal, token spam, dan posisi yang tidak dapat dihargai.
+6. **Token risk:** hasil pemeriksaan yang tidak tersedia harus ditandai unknown; jangan memberi label aman hanya karena tidak ada temuan.
+7. **Tidak ada data rekaan:** jangan mengisi feed gagal dengan angka contoh tanpa label demo yang jelas.
 
 ## Arsitektur
 
-- `app/`: route, layout, dan server/client page Next.js.
-- `components/`: komponen antarmuka berdasarkan fitur.
-- `lib/`: integrasi data, utilitas, dan fungsi domain yang dapat digunakan ulang.
-- `store/` atau modul state terkait: state client bila dibutuhkan.
-- `docs/`: keputusan arsitektur dan roadmap.
-
-Pertahankan struktur tanpa folder `src/`. Hindari menaruh seluruh logika data di komponen presentasi. Pisahkan adapter penyedia data dari komponen UI, gunakan tipe eksplisit, dan perlakukan respons API eksternal sebagai data yang tidak tepercaya.
-
-### Prinsip data pasar
-
-1. Simbol, timeframe, dan parameter API harus divalidasi sebelum request.
-2. Perhatikan batas rate-limit dan gunakan timeout/error handling.
-3. WebSocket harus melakukan cleanup saat komponen unmount dan membatasi reconnect dengan backoff.
-4. Timestamp disimpan/ditangani dengan zona waktu yang eksplisit; tampilan lokal boleh mengikuti zona waktu pengguna.
-5. Harga, candle, berita, dan indikator harus menampilkan status stale/loading/error jika relevan.
-6. Jangan menyebut data tertunda sebagai real-time atau menampilkan data simulasi tanpa label.
-
-Lihat [dokumen arsitektur](docs/ARCHITECTURE.md) dan [roadmap](docs/ROADMAP.md).
-
-## Sumber data dan batasan
-
-- **Binance API**: data pasar crypto publik; ketersediaan dan rate limit mengikuti kebijakan Binance.
-- **TradingView widgets**: embed/visualisasi yang tunduk pada syarat dan kemampuan widget.
-- **World Bank API**: indikator ekonomi historis sesuai cakupan dataset.
-- **RSS publisher**: feed dapat berubah, tidak tersedia, atau membatasi akses.
-
-Sumber-sumber tersebut tidak menjamin semua pasar global, data tick, fundamental, atau berita akan tersedia secara seragam. Integrasi perlu diuji dan setiap tampilan harus menunjukkan sumber data yang benar. Jangan melakukan scraping atau redistribusi yang melanggar syarat layanan sumber.
+Lihat [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) untuk aliran data, pemisahan provider, prinsip keamanan, dan rancangan modul. Lihat [docs/ROADMAP.md](docs/ROADMAP.md) untuk tahapan implementasi.
 
 ## Keamanan
 
-- Jangan menyimpan secrets di repository atau mengirimkannya ke browser.
-- Validasi dan batasi parameter endpoint; hindari proxy URL arbitrer yang membuka risiko SSRF.
-- Jangan merender HTML dari feed berita tanpa sanitasi.
-- Terapkan batas request, timeout, dan cache yang sesuai untuk endpoint server.
-- Laporkan kerentanan secara privat sesuai [SECURITY.md](SECURITY.md).
+- Jangan pernah meminta atau menyimpan seed phrase/private key pengguna untuk fitur riset.
+- API key exchange, jika suatu saat dibutuhkan, harus dibatasi izin dan tidak memiliki izin withdraw.
+- Jangan membuat proxy URL arbitrer yang berisiko SSRF.
+- Validasi input, sanitasi konten pihak ketiga, batasi request, dan jangan merender HTML feed secara mentah.
+- Laporkan kerentanan melalui [SECURITY.md](SECURITY.md).
 
 ## Roadmap
 
-- [x] Fondasi Next.js App Router dan TypeScript
-- [x] Halaman utama dan route modul awal
-- [x] Fondasi chart workspace
-- [ ] Konsistensi loading/error/empty states pada seluruh modul
-- [ ] Pengujian unit untuk parser dan adapter data
-- [ ] Validasi skema untuk respons API eksternal
-- [ ] Observabilitas, rate-limit handling, dan fallback data yang transparan
-- [ ] Riset AI dengan sitasi sumber dan label ketidakpastian
-- [ ] Analitik portofolio dan risiko dengan metodologi yang terdokumentasi
-- [ ] Cakupan multi-aset lebih luas berdasarkan integrasi resmi yang tersedia
-
-Roadmap bukan klaim bahwa fitur tersebut sudah tersedia. Status akan diperbarui saat implementasi dan pengujian selesai.
+Roadmap produk mencakup stabilisasi terminal chart, scanner meme coin, on-chain wallet intelligence, token risk research, alert, dan portfolio analytics. Status aktual tiap item harus mengikuti implementasi serta pengujian; lihat [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Kontribusi
 
-1. Buat branch fitur dari `main`.
-2. Buat perubahan sekecil mungkin dan jelaskan alasan teknisnya.
-3. Tambahkan atau perbarui pengujian bila mengubah logika data.
-4. Jalankan `npm run lint`, `npm run typecheck`, dan `npm run build`.
-5. Jangan commit secrets, file hasil build, atau data pasar yang disalin tanpa izin.
-6. Buka pull request dengan ringkasan, hasil pengujian, screenshot bila mengubah UI, dan sumber data yang digunakan.
+Baca [CONTRIBUTING.md](CONTRIBUTING.md). Pull request harus menjelaskan sumber data, batasan provider, pengujian, dan dampak terhadap pengguna. Jangan memasukkan kredensial, alamat wallet pribadi yang sensitif, atau data pihak ketiga yang tidak berizin.
 
-Baca [CONTRIBUTING.md](CONTRIBUTING.md).
+## Disclaimer risiko
 
-## Disclaimer
-
-Zabrina Alpha Terminal adalah perangkat lunak informasi dan riset, bukan penasihat keuangan. Data dapat tertunda, tidak lengkap, atau salah. Analisis AI dan indikator tidak menjamin hasil, tidak merupakan rekomendasi membeli/menjual, dan tidak menggantikan penilaian independen. Selalu verifikasi data pada sumber primer dan kelola risiko Anda sendiri.
+Zabrina Alpha Terminal adalah perangkat lunak informasi dan riset, bukan penasihat keuangan. Aset kripto dan meme coin sangat volatil dan dapat kehilangan sebagian besar atau seluruh nilainya. Data dapat terlambat atau tidak lengkap; deteksi risiko tidak sempurna; aktivitas wallet historis tidak menjamin hasil mendatang. Lakukan verifikasi mandiri dan jangan mempertaruhkan dana yang tidak sanggup Anda hilangkan.
 
 ## Lisensi
 
-Distribusi menggunakan MIT License jika file `LICENSE` di repository menyatakan demikian. Periksa lisensi dan ketentuan setiap layanan/data pihak ketiga secara terpisah.
+Periksa file `LICENSE` untuk ketentuan lisensi proyek. Data, API, logo, dan layanan pihak ketiga tetap tunduk pada ketentuan masing-masing.
