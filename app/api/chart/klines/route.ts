@@ -23,16 +23,22 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const raw = await res.json();
+        const raw: unknown = await res.json();
+        if (!Array.isArray(raw)) {
+            return NextResponse.json({ error: 'Format data candle tidak valid' }, { status: 502 });
+        }
 
-        const klines = raw.map((k: any[]) => ({
-            time: Math.floor(k[0] / 1000),
-            open: parseFloat(k[1]),
-            high: parseFloat(k[2]),
-            low: parseFloat(k[3]),
-            close: parseFloat(k[4]),
-            volume: parseFloat(k[5]),
-        }));
+        const klines = raw
+            .filter((k): k is unknown[] => Array.isArray(k) && k.length >= 6)
+            .map((k) => ({
+                time: Math.floor(Number(k[0]) / 1000),
+                open: Number(k[1]),
+                high: Number(k[2]),
+                low: Number(k[3]),
+                close: Number(k[4]),
+                volume: Number(k[5]),
+            }))
+            .filter((k) => Number.isFinite(k.time) && Number.isFinite(k.open) && Number.isFinite(k.high) && Number.isFinite(k.low) && Number.isFinite(k.close) && Number.isFinite(k.volume));
 
         return NextResponse.json(
             { symbol, interval, klines },
