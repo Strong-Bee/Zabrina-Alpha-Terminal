@@ -2,57 +2,92 @@
 
 ## Tujuan
 
-Menjaga aplikasi terminal multi-aset tetap modular, dapat diuji, dan transparan tentang asal serta kualitas data. Dokumen ini menggambarkan arah arsitektur; struktur aktual tiap modul tetap mengikuti kode pada branch aktif.
+Zabrina Alpha Terminal adalah terminal riset **khusus cryptocurrency dan meme coin**. Arsitektur perlu memisahkan UI, normalisasi data pasar, integrasi provider, analisis on-chain, dan kalkulasi risiko agar hasil dapat diuji dan ditelusuri ke sumbernya.
+
+Dokumen ini menjelaskan rancangan target; jangan menganggap integrasi sebagai tersedia sebelum kode dan pengujiannya ada.
 
 ## Lapisan aplikasi
 
-1. **Route dan layout — `app/`**: routing Next.js App Router, metadata, dan komposisi halaman.
-2. **Komponen fitur — `components/`**: UI chart, watchlist, kalender, berita, dan widget yang digunakan ulang.
-3. **Adapter data — `lib/` atau modul domain sejenis**: komunikasi HTTP/WebSocket, parsing, validasi, cache, dan normalisasi.
-4. **State client**: gunakan Zustand hanya untuk state yang perlu dibagikan antar komponen; state server/data fetching tidak otomatis perlu dipindahkan ke store global.
-5. **Sumber eksternal**: Binance public market data, widget TradingView, dataset World Bank, dan feed berita sesuai integrasi yang benar-benar tersedia.
+1. **Routes dan layout — `app/`**: halaman terminal dan endpoint Next.js.
+2. **Feature components — `components/`**: chart, watchlist, scanner, token detail, wallet view, alert, dan portfolio.
+3. **Domain/data adapters — `lib/` atau modul domain terkait**: REST/WebSocket, RPC/indexer, parser, validasi, cache, dan normalisasi.
+4. **Domain models**: token, chain, pair/pool, candle, trade, wallet activity, liquidity, dan risk findings dengan tipe eksplisit.
+5. **State UI**: Zustand untuk state yang benar-benar dibagikan; data server tidak otomatis perlu masuk global store.
+6. **Providers**: exchange, DEX analytics, blockchain RPC/indexer, explorer, dan sumber berita sesuai integrasi aktif.
 
-## Aliran data yang disarankan
+## Aliran data
 
 ```mermaid
 flowchart TD
-  A[External data provider] --> B[Server adapter or client connector]
+  A[Exchange / DEX / RPC / Indexer] --> B[Provider adapter]
   B --> C[Validate and normalize]
-  C --> D[Cache / rate-limit handling]
-  D --> E[Typed domain data]
-  E --> F[UI components]
-  F --> G[Loading, stale, empty and error states]
+  C --> D[Cache, timeout, rate-limit control]
+  D --> E[Typed crypto domain data]
+  E --> F[Chart / Scanner / Wallet / Token UI]
+  F --> G[Source, freshness, unknown and error states]
+  E --> H[Risk rules and analytics]
+  H --> I[Explainable findings with evidence]
 ```
 
-Respons eksternal harus diperlakukan sebagai input yang tidak tepercaya. Validasi tipe, rentang angka, simbol, timestamp, dan bentuk respons sebelum data digunakan oleh komponen.
+## Modul domain
 
-## Chart dan streaming
+### Market terminal
 
-- Default produk: `BTCUSDT`, timeframe `4H`, target historis hingga 600 candle.
-- Normalisasi candle ke urutan waktu naik dan hindari duplikasi timestamp.
-- Tampilkan timestamp dalam zona waktu yang eksplisit; jangan mencampur detik dan milidetik.
-- Tangani disconnect, reconnect dengan backoff, dan cleanup subscription saat komponen dilepas.
-- Batasi koneksi per simbol/timeframe; jangan membuat WebSocket baru pada setiap render.
-- Data live, tertunda, dan demo harus dibedakan secara visual dan semantik.
+- Candle menggunakan satuan timestamp dan format harga yang konsisten.
+- Simbol harus diikat ke exchange/market yang benar; simbol yang sama dapat mewakili aset berbeda di provider berbeda.
+- Pisahkan spot dan perpetual data. Funding rate, open interest, liquidation, dan order book hanya ditampilkan jika provider benar-benar menyediakan data tersebut.
+- Streaming harus menangani disconnect, reconnect backoff, unsubscribe, dan cleanup.
 
-## API dan keamanan
+### Meme coin scanner
 
-- Validasi parameter query sebelum memanggil provider.
-- Beri timeout dan batas ukuran respons.
-- Cache data publik sesuai freshness yang dibutuhkan dan batas rate provider.
-- Jangan menyediakan proxy URL arbitrer; hal tersebut dapat membuka SSRF.
-- Jangan meneruskan rahasia provider ke client bundle.
-- Sanitasi konten RSS dan jangan merender HTML mentah dari sumber luar.
+Setiap hasil scanner sebaiknya menyimpan:
+- Chain ID dan alamat token/pair yang kanonis.
+- DEX/pool dan timestamp pair dibuat, jika tersedia.
+- Harga, liquidity, volume, jumlah transaksi, perubahan harga, market cap/FDV beserta sumbernya.
+- Waktu pengambilan data dan indikator freshness.
+- Status validasi serta alasan token masuk filter.
 
-## Kegagalan provider
+Jangan menggabungkan hasil dari jaringan atau pair berbeda hanya berdasarkan nama/simbol token. Gunakan alamat kontrak/mint dan chain sebagai identitas utama.
 
-UI sebaiknya menjelaskan apakah data gagal dimuat, sudah kedaluwarsa, atau memang belum tersedia. Hindari fallback diam-diam ke angka contoh. Jika data contoh diperlukan untuk pengembangan, gunakan label `DEMO` yang jelas.
+### On-chain wallet intelligence
+
+- Simpan alamat dan jaringan secara eksplisit; alamat serupa pada chain berbeda bukan identitas yang sama.
+- Bedakan transaksi swap, transfer, fee, bridge, dan transfer internal jika datanya mendukung.
+- PnL memerlukan histori transaksi yang cukup, harga historis, biaya, dan perlakuan transfer yang terdokumentasi.
+- Beri label estimasi/incomplete bila histori atau pricing tidak lengkap.
+- Whale dan early buyer adalah deskripsi perilaku teramati, bukan bukti kemampuan memprediksi harga.
+
+### Token risk engine
+
+- Hasil tiap pemeriksaan harus berisi status `pass`, `warning`, `fail`, atau `unknown`, alasan, sumber, dan timestamp.
+- Pemeriksaan berbeda antar-chain. Hindari menggunakan asumsi token EVM untuk token Solana atau sebaliknya.
+- Risiko konsentrasi holder harus mengecualikan akun pool/burn/locker yang teridentifikasi hanya bila klasifikasinya dapat dibuktikan.
+- Jangan menyatakan token aman hanya berdasarkan skor agregat.
+
+## Prinsip provider dan data
+
+- Gunakan API/RPC resmi atau provider dengan izin yang sesuai.
+- Terapkan timeout, schema validation, batas ukuran respons, retry backoff, cache, dan penanganan HTTP 429.
+- Hindari scraping yang melanggar ketentuan layanan.
+- Jangan mengisi kegagalan provider dengan harga sintetis tanpa label demo.
+- Tampilkan sumber, waktu pengambilan, satuan, serta status stale untuk data penting.
+
+## Keamanan
+
+- Jangan meminta seed phrase, private key, atau secret wallet untuk fungsi riset.
+- Rahasia API tidak boleh masuk ke client bundle atau log.
+- Jika kelak ada integrasi exchange untuk trading, gunakan API key minimal-permission, non-withdrawal, dan pemisahan jelas antara paper trading dan live trading.
+- Validasi alamat, chain, simbol, dan parameter sebelum request.
+- Hindari proxy URL arbitrer, sanitasi teks pihak ketiga, dan batasi request.
+- Audit semua kalkulasi yang memengaruhi ukuran posisi atau keputusan risiko.
 
 ## Pengujian
 
-Prioritaskan pengujian untuk:
-- Parser dan normalisasi candle.
-- Konversi timestamp dan pengurutan data.
-- Penanganan respons kosong, malformed, timeout, dan rate limit.
-- Logika filter berita/kalender.
-- Perhitungan indikator dan risk metric dengan data fixture yang dapat direproduksi.
+Prioritaskan unit tests untuk:
+- Normalisasi candle dan timestamp.
+- Identitas token/pair lintas chain.
+- Parsing respons provider, data kosong, malformed, timeout, dan rate limit.
+- Kalkulasi perubahan harga, liquidity/volume metrics, serta realized/unrealized PnL.
+- Klasifikasi transaksi wallet dan deteksi data yang tidak lengkap.
+- Token-risk findings, termasuk status unknown.
+- WebSocket reconnect dan cleanup.
