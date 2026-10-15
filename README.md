@@ -1,681 +1,178 @@
-# ⚡ ZABRINA ALPHA TERMINAL
+# Zabrina Alpha Terminal
 
-> **Professional Trading Intelligence Platform** — Kalender ekonomi, chart real-time, berita pasar, dan data makro dalam satu terminal terintegrasi.
+**Terminal intelijen pasar multi-aset** untuk memantau harga, membaca chart, mengikuti berita, dan menyusun riset pasar dalam satu workspace.
+
+> Status: proyek aktif dalam pengembangan. Ketersediaan setiap modul bergantung pada implementasi di branch saat ini dan layanan data eksternal. Jangan menganggap roadmap sebagai fitur produksi.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.4-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06b6d4?logo=tailwindcss)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
----
+## Daftar isi
 
-## 📖 Daftar Isi
+- [Tujuan proyek](#tujuan-proyek)
+- [Modul produk](#modul-produk)
+- [Teknologi](#teknologi)
+- [Mulai lokal](#mulai-lokal)
+- [Konfigurasi](#konfigurasi)
+- [Perintah pengembangan](#perintah-pengembangan)
+- [Arsitektur](#arsitektur)
+- [Sumber data dan batasan](#sumber-data-dan-batasan)
+- [Keamanan](#keamanan)
+- [Roadmap](#roadmap)
+- [Kontribusi](#kontribusi)
+- [Disclaimer](#disclaimer)
+- [Lisensi](#lisensi)
 
-- [Tentang Project](#-tentang-project)
-- [Fitur Utama](#-fitur-utama)
-- [Tech Stack](#-tech-stack)
-- [Struktur Project](#-struktur-project)
-- [Instalasi](#-instalasi)
-- [Environment Variables](#-environment-variables)
-- [API Routes](#-api-routes)
-- [Design System](#-design-system)
-- [Deployment](#-deployment)
-- [FAQ](#-faq)
-- [Lisensi](#-lisensi)
+## Tujuan proyek
 
----
+Zabrina Alpha Terminal dikembangkan sebagai antarmuka riset pasar yang menyatukan beberapa kelas aset dan konteks makro. Sasaran jangka panjangnya mencakup crypto, saham, forex, komoditas, indeks, berita, indikator ekonomi, analitik kuantitatif, on-chain, serta alat manajemen risiko. Integrasi harus diberi label berdasarkan sumber, waktu pembaruan, dan status ketersediaannya.
 
-## 🎯 Tentang Project
+## Modul produk
 
-**ZABRINA ALPHA TERMINAL** adalah platform trading intelligence berbasis web yang menyatukan berbagai data pasar dalam satu dashboard profesional. Dirancang untuk trader, analis, dan investor yang membutuhkan:
+### Chart workspace — `/chart`
 
-- **Data ekonomi real-time** dari sumber terpercaya (TradingView, World Bank, Binance)
-- **Chart profesional** dengan TradingView Widget
-- **Berita pasar** dari 80+ sumber RSS terkurasi
-- **Analisis makro** dan sentimen pasar
+- Workspace chart dengan fokus pada tampilan penuh.
+- Memulai dari simbol **BTCUSDT** dan timeframe **4H** sebagai default produk.
+- Target historis hingga 600 candle, jika endpoint penyedia mendukung dan batas API mengizinkan.
+- Desain untuk pergantian simbol/timeframe, watchlist, harga, dan data streaming.
+- Kode chart harus menangani loading, error, data kosong, reconnect, dan cleanup koneksi.
 
-Project ini dibangun dengan **Next.js 16 App Router**, **TypeScript**, **Tailwind CSS v4**, dan mengutamakan **performance**, **SEO**, dan **user experience**.
+### Kalender ekonomi — `/economic-calendar`
 
----
+- Agenda ekonomi dan konteks indikator makro.
+- Filter dampak/status dan informasi waktu event bila tersedia dari sumber.
+- Nilai forecast, previous, dan actual harus menyertakan sumber; jangan mengisi angka yang tidak tersedia dengan data rekaan.
 
-## ✨ Fitur Utama
+### Berita — `/news`
 
-### 📅 Kalender Ekonomi (`/economic-calendar`)
+- Agregasi berita dari sumber yang dapat diakses.
+- Kategori, pencarian, penyaringan, dan penanganan feed yang gagal.
+- Konten tetap milik penerbit asal; tampilkan atribusi dan tautan sumber.
 
-- **Agenda event real-time** dari TradingView Events API
-- **Status event**: Sudah Rilis / Sedang Berlangsung / Akan Datang
-- **Countdown timer** untuk event yang akan datang
-- **Filter** berdasarkan dampak (high/medium/low) dan status
-- **Data GDP global** dari World Bank Data360 (200+ negara)
-- **Highlight event** high-impact dengan catatan analisis
-- **Multi-source forecast** (ForexFactory, TradingView, MQL5)
-- **Suku bunga bank sentral** dengan bias hawkish/dovish
-- **Wawasan pasar** dengan sentimen instansi
-- **Kabar pasar** terbaru dari berbagai sumber
-- **Peta ekonomi global** via TradingView Widget
-- **Indikator makro** historis (CPI, NFP, GDP, dll.)
+### Landing page — `/`
 
-### 📈 Chart (`/chart`)
+- Ringkasan produk dan akses menuju modul utama.
+- Angka harga dan ticker hanya boleh ditampilkan sebagai live jika benar-benar berasal dari feed yang aktif; data contoh harus diberi label demo.
 
-- **TradingView Advanced Chart** terintegrasi
-- **Multi-symbol** support: BTC, ETH, SOL, XRP, DOGE, BNB, ADA, AVAX, LINK, MATIC
-- **Multi-timeframe**: 1m hingga 1M
-- **Watchlist real-time** via Binance WebSocket
-- **Harga live** dengan persentase perubahan
-- **Auto-reconnect** WebSocket
-- **Dark theme** konsisten dengan brand
+### Cakupan riset berikutnya
 
-### 📰 Berita (`/news`)
+AI research assistant, ringkasan berita dengan sitasi, makro global, analitik quant, on-chain, scanner peluang, portfolio/risk analytics, alert, dan personalisasi watchlist direncanakan bertahap. Modul yang belum terhubung ke data nyata tidak boleh dipresentasikan sebagai sinyal atau analisis terverifikasi.
 
-- **80+ sumber RSS** terkurasi dari seluruh dunia
-- **9 kategori**: Semua, Crypto, Saham Lokal, Saham Global, Forex, Komoditas, Makro, Global, Teknologi
-- **Auto-refresh** setiap 5 menit
-- **Search & filter** instan
-- **Featured card** untuk berita terbaru
-- **Optimasi**: cache, concurrency limit, blacklist otomatis
+## Teknologi
 
-### 🏠 Landing Page (`/`)
+- **Next.js App Router**, React, TypeScript strict mode
+- **Tailwind CSS v4**
+- **lightweight-charts** untuk visualisasi chart yang dibangun sendiri
+- **Zustand** untuk state client yang memang perlu dibagi
+- **Binance Public API/WebSocket** untuk data pasar crypto publik
+- **ESLint** untuk pemeriksaan kualitas kode
 
-- **Hero section** dengan value proposition
-- **Live ticker** animasi (XAU, EUR/USD, BTC, dll.)
-- **Feature cards** 6 modul utama
-- **Live clock** WIB dengan detik
-- **CTA** yang mengarah ke Kalender Ekonomi
+Versi dependensi aktual ditentukan oleh `package.json` dan lockfile. Jangan memperbarui lockfile secara manual; gunakan npm untuk menyelaraskannya setelah perubahan dependensi.
 
----
+## Mulai lokal
 
-## 🛠 Tech Stack
-
-### Core
-
-| Teknologi | Versi | Kegunaan |
-|-----------|-------|----------|
-| **Next.js** | 16.4 | Framework React dengan App Router |
-| **React** | 19 | UI library |
-| **TypeScript** | 5.x | Type safety |
-| **Turbopack** | Bundled | Bundler dev & build cepat |
-
-### Styling
-
-| Teknologi | Versi | Kegunaan |
-|-----------|-------|----------|
-| **Tailwind CSS** | 4.x | Utility-first CSS |
-| **Font Awesome** | 6.5 | Ikon |
-| **Flag Icons** | 7.5 | Bendera negara |
-
-### Data & State
-
-| Teknologi | Kegunaan |
-|-----------|----------|
-| **Zustand** | State management (chart store) |
-| **Native Fetch** | HTTP client |
-| **WebSocket** | Real-time data (Binance) |
-| **RSS Parser** | Custom XML parser |
-
-### Data Sources
-
-- **TradingView** — Events API, Widgets
-- **World Bank Data360** — GDP data
-- **Binance Public API** — Klines, Tickers, WebSocket
-
----
-
-## 📁 Struktur Project
-
-```
-zabrina-alpha-terminal/
-├── app/                                    # Next.js App Router
-│   ├── layout.tsx                          # Root layout (Navbar + Footer)
-│   ├── page.tsx                            # Landing page
-│   ├── globals.css                         # Design system + Tailwind
-│   ├── economic-calendar/
-│   │   └── page.tsx                        # Halaman kalender ekonomi
-│   ├── chart/
-│   │   └── page.tsx                        # Halaman chart
-│   ├── news/
-│   │   └── page.tsx                        # Halaman berita
-│   └── api/
-│       ├── economic-calendar/
-│       │   ├── events/route.ts             # API events (TradingView)
-│       │   └── gdp/route.ts                # API GDP (World Bank)
-│       ├── chart/
-│       │   ├── klines/route.ts             # API klines (Binance)
-│       │   └── tickers/route.ts            # API tickers (Binance)
-│       └── news/
-│           └── route.ts                    # API berita (RSS aggregator)
-│
-├── components/                             # React components
-│   ├── Navbar.tsx                          # Navigasi utama
-│   ├── Footer.tsx                          # Footer
-│   ├── CopyrightYear.tsx                   # Client component (tahun)
-│   ├── ClockDisplay.tsx                    # Live clock
-│   ├── NewsletterForm.tsx                  # Form newsletter
-│   │
-│   ├── economic-calendar/                  # Komponen kalender ekonomi
-│   │   ├── EconomicCalendarHub.tsx         # Wrapper utama
-│   │   ├── CalendarHero.tsx                # Hero section
-│   │   ├── HighlightEvents.tsx             # Sorotan event high-impact
-│   │   ├── EventsTable.tsx                 # Tabel event mendatang
-│   │   ├── MarketNews.tsx                  # Kabar pasar
-│   │   ├── EconomicMap.tsx                 # Peta ekonomi TradingView
-│   │   ├── MacroIndicators.tsx             # Tabel makro historis
-│   │   ├── ReleaseSummaries.tsx            # Rangkuman FOMC/CPI/NFP
-│   │   ├── CentralBankRates.tsx            # Suku bunga bank sentral
-│   │   ├── MarketInsights.tsx              # Sentimen pasar
-│   │   ├── FundamentalSummary.tsx          # Ringkasan fundamental
-│   │   ├── GdpPanel.tsx                    # Panel GDP
-│   │   ├── EventsPanel.tsx                 # Panel events
-│   │   ├── FlagIcon.tsx                    # Bendera negara
-│   │   ├── Pagination.tsx                  # Pagination
-│   │   ├── data.ts                         # Data statis
-│   │   └── types.ts                        # TypeScript interfaces
-│   │
-│   ├── chart/                              # Komponen chart
-│   │   ├── ChartWorkspace.tsx              # Layout chart
-│   │   ├── TopToolbar.tsx                  # Symbol picker + TF
-│   │   ├── PriceChart.tsx                  # TradingView Widget
-│   │   ├── Watchlist.tsx                   # Watchlist real-time
-│   │   ├── chartStore.ts                   # Zustand store
-│   │   ├── symbols.ts                      # Simbol + timeframe
-│   │   └── types.ts                        # Types
-│   │
-│   └── news/                               # Komponen berita
-│       ├── NewsPage.tsx                    # Wrapper berita
-│       ├── NewsCategoryTabs.tsx            # Tab kategori
-│       ├── NewsCard.tsx                    # Kartu berita
-│       ├── NewsFilters.tsx                 # Filter + search
-│       ├── NewsList.tsx                    # List berita
-│       └── types.ts                        # Types
-│
-├── lib/                                    # Utility functions
-│   ├── economic-calendar/
-│   │   └── utils.ts                        # Helper kalender
-│   └── news/
-│       └── sources.ts                      # Konfigurasi RSS sources
-│
-├── public/                                 # Static assets
-│   └── og-*.png                            # OpenGraph images
-│
-├── next.config.ts                          # Konfigurasi Next.js
-├── postcss.config.mjs                      # PostCSS config
-├── tsconfig.json                           # TypeScript config
-├── package.json                            # Dependencies
-└── README.md                               # Dokumentasi ini
-```
-
----
-
-## 🚀 Instalasi
-
-### Prasyarat
-
-- **Node.js** ≥ 20.x
-- **npm** ≥ 10.x atau **pnpm** ≥ 9.x
-- Koneksi internet (untuk fetch data real-time)
-
-### Langkah Install
-
-1. **Clone repository**
+Persyaratan: Node.js versi LTS yang kompatibel dengan versi Next.js di `package.json`, serta npm.
 
 ```bash
-git clone https://github.com/your-username/zabrina-alpha-terminal.git
-cd zabrina-alpha-terminal
-```
-
-2. **Install dependencies**
-
-```bash
-npm install
-# atau
-pnpm install
-yarn install
-```
-
-3. **Setup environment variables** (opsional)
-
-Buat file `.env.local` di root:
-
-```env
-# TradingView cookie (opsional, untuk events API)
-TV_COOKIE=
-
-# Base URL untuk metadata
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-```
-
-4. **Jalankan dev server**
-
-```bash
+git clone https://github.com/Strong-Bee/Zabrina-Alpha-Terminal.git
+cd Zabrina-Alpha-Terminal
+npm ci
 npm run dev
 ```
 
-5. **Buka di browser**
+Buka [http://localhost:3000](http://localhost:3000).
 
-```
-http://localhost:3000
-```
+Jika `npm ci` gagal, periksa versi Node.js/npm dan pastikan `package.json` serta `package-lock.json` berasal dari commit yang sama. Jangan menghapus lockfile sebagai solusi pertama.
 
----
+## Konfigurasi
 
-## 🔐 Environment Variables
+Salin `.env.example` menjadi `.env.local` jika diperlukan. Variabel pada contoh adalah opsional kecuali suatu modul menyatakannya wajib. Jangan pernah commit token, API key, kredensial, atau file `.env.local`.
 
-| Variable | Wajib | Deskripsi |
-|----------|-------|-----------|
-| `TV_COOKIE` | ❌ | Cookie TradingView untuk events API (kalau upstream blokir) |
-| `NEXT_PUBLIC_BASE_URL` | ❌ | Base URL untuk metadata SEO |
+Aplikasi yang memakai endpoint publik sebaiknya tidak memerlukan rahasia server. Jika kelak ada provider yang memerlukan key, akses key hanya dari server-side route dan validasi input request.
 
-**Cara mendapatkan `TV_COOKIE`:**
-1. Buka `tradingview.com` di browser
-2. Login (kalau punya akun)
-3. DevTools → Application → Cookies
-4. Copy value `sessionid` dan `tv_ecuid`
-5. Format: `sessionid=xxx; tv_ecuid=yyy`
-
----
-
-## 🔌 API Routes
-
-### `GET /api/economic-calendar/events`
-
-Ambil event ekonomi dari TradingView.
-
-**Query params:**
-- `from` (required) — Tanggal mulai (ISO 8601)
-- `to` (required) — Tanggal akhir (ISO 8601)
-- `countries` (optional) — Kode negara dipisahkan koma
-
-**Contoh:**
-```
-GET /api/economic-calendar/events?from=2026-10-08T00:00:00.000Z&to=2026-10-15T00:00:00.000Z
-```
-
-**Response:**
-```json
-[
-  {
-    "id": "event-123",
-    "country": "US",
-    "title": "Non-Farm Payrolls",
-    "date": "2026-10-08T12:30:00.000Z",
-    "impact": "high",
-    "actual": "185K",
-    "forecast": "180K",
-    "previous": "175K"
-  }
-]
-```
-
-**Headers response:**
-- `X-Data-Source`: `live` | `cache` | `stale` | `fallback`
-- `X-Duration`: Waktu fetch (ms)
-- `X-Cache-Age`: Umur cache (ms)
-
-### `GET /api/economic-calendar/gdp`
-
-Ambil data GDP dari World Bank Data360.
-
-**Response:**
-```json
-{
-  "region": "global",
-  "lastUpdate": 1791400000000,
-  "dataSource": {
-    "id": "world-bank-data360",
-    "attributionName": "World Bank Data360"
-  },
-  "data": {
-    "USA": { "v": 30769700000000, "s": "ECONOMICS:USAGDP" },
-    "CHN": { "v": 19498039388042.61, "s": "ECONOMICS:CHNGDP" }
-  },
-  "_meta": {
-    "source": "live",
-    "count": 50,
-    "durationMs": 234
-  }
-}
-```
-
-### `GET /api/chart/klines`
-
-Ambil data klines (candlestick) dari Binance.
-
-**Query params:**
-- `symbol` — Binance symbol (default: `BTCUSDT`)
-- `interval` — Timeframe (default: `1d`)
-- `limit` — Jumlah candle (default: `500`)
-
-**Contoh:**
-```
-GET /api/chart/klines?symbol=BTCUSDT&interval=1h&limit=100
-```
-
-### `GET /api/chart/tickers`
-
-Ambil ticker 24 jam dari Binance.
-
-**Query params:**
-- `symbols` — Array simbol (JSON atau CSV)
-
-**Contoh:**
-```
-GET /api/chart/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT
-```
-
-### `GET /api/news`
-
-Ambil berita dari 80+ sumber RSS.
-
-**Query params:**
-- `category` — Kategori berita (default: `semua`)
-- `limit` — Jumlah berita (default: `50`, max: `100`)
-
-**Kategori tersedia:**
-- `semua`, `crypto`, `saham-lokal`, `saham-global`
-- `forex`, `komoditas`, `makro`, `global`, `teknologi`
-
-**Contoh:**
-```
-GET /api/news?category=crypto&limit=20
-```
-
-**Response:**
-```json
-{
-  "category": "crypto",
-  "count": 20,
-  "totalAvailable": 350,
-  "sources": {
-    "total": 24,
-    "success": 22,
-    "failed": 2
-  },
-  "cached": true,
-  "items": [
-    {
-      "id": "coindesk-abc123",
-      "title": "Bitcoin rallies past $84,000",
-      "link": "https://...",
-      "source": "CoinDesk",
-      "publishedAt": "2026-10-08T01:23:00.000Z",
-      "category": "crypto"
-    }
-  ]
-}
-```
-
----
-
-## 🎨 Design System
-
-### Warna (`globals.css`)
-
-```css
-@theme {
-  /* Surface */
-  --color-za-bg: #04060a;          /* Background utama */
-  --color-za-surface: #0a0e15;     /* Card surface */
-  --color-za-surface-2: #0f141c;   /* Elevated surface */
-  --color-za-border: #1a2230;      /* Border default */
-  --color-za-border-bright: #253243;
-
-  /* Text */
-  --color-za-text: #e8edf5;        /* Primary text */
-  --color-za-text-muted: #8b98ab;  /* Secondary text */
-  --color-za-text-dim: #56637a;    /* Tertiary text */
-
-  /* Accent */
-  --color-za-accent: #00d4ff;      /* Cyan utama */
-  --color-za-accent-2: #4facfe;    /* Blue secondary */
-  --color-za-accent-3: #7c3aed;    /* Purple tertiary */
-
-  /* Semantic */
-  --color-za-success: #00e599;     /* Bullish / success */
-  --color-za-warning: #fbbf24;     /* Warning */
-  --color-za-danger: #ff4757;      /* Bearish / error */
-}
-```
-
-### Font
-
-- **Sans**: Inter (via `next/font/google`)
-- **Mono**: JetBrains Mono (untuk angka & code)
-
-### Utility Classes
-
-| Class | Kegunaan |
-|-------|----------|
-| `.text-display` | Typography display (letter-spacing -0.03em) |
-| `.text-gradient-accent` | Gradient text (cyan → purple) |
-| `.btn-primary` | Tombol utama dengan glow |
-| `.glass` | Glass morphism effect |
-| `.border-gradient` | Border dengan gradient |
-| `.terminal-grid` | Grid background terminal-style |
-| `.glow-orb` | Ambient glow effect |
-| `.status-dot-live` | Live pulsing indicator |
-| `.flag-wrapper` | Flag icon wrapper |
-| `.animate-in` | Fade-in animation |
-| `.animate-marquee` | Marquee ticker animation |
-
-### Contoh Penggunaan
-
-```tsx
-<div className="rounded-2xl border border-za-border bg-za-surface/60 p-6 backdrop-blur-sm">
-  <h2 className="text-display text-3xl text-white">Judul</h2>
-  <p className="text-za-text-muted">Deskripsi</p>
-  <button className="btn-primary rounded-xl px-6 py-3">
-    <span>Aksi</span>
-  </button>
-</div>
-```
-
----
-
-## 🚢 Deployment
-
-### Vercel (Direkomendasikan)
-
-1. **Push ke GitHub**
+## Perintah pengembangan
 
 ```bash
-git add .
-git commit -m "feat: initial deploy"
-git push origin main
+npm run dev        # server pengembangan
+npm run lint       # ESLint
+npm run typecheck  # pemeriksaan TypeScript
+npm run build      # build produksi
+npm run start      # jalankan build produksi
 ```
 
-2. **Import ke Vercel**
-   - Buka [vercel.com/new](https://vercel.com/new)
-   - Import repository
-   - Klik **Deploy**
+Sebelum membuat pull request, jalankan lint, typecheck, dan build. CI menggunakan pemeriksaan otomatis yang sama.
 
-3. **Set environment variables** (kalau ada)
-   - Settings → Environment Variables
-   - Tambahkan `TV_COOKIE` (opsional)
+## Arsitektur
 
-### Docker
+- `app/`: route, layout, dan server/client page Next.js.
+- `components/`: komponen antarmuka berdasarkan fitur.
+- `lib/`: integrasi data, utilitas, dan fungsi domain yang dapat digunakan ulang.
+- `store/` atau modul state terkait: state client bila dibutuhkan.
+- `docs/`: keputusan arsitektur dan roadmap.
 
-```dockerfile
-# Dockerfile
-FROM node:20-alpine
+Pertahankan struktur tanpa folder `src/`. Hindari menaruh seluruh logika data di komponen presentasi. Pisahkan adapter penyedia data dari komponen UI, gunakan tipe eksplisit, dan perlakukan respons API eksternal sebagai data yang tidak tepercaya.
 
-WORKDIR /app
+### Prinsip data pasar
 
-COPY package*.json ./
-RUN npm ci --only=production
+1. Simbol, timeframe, dan parameter API harus divalidasi sebelum request.
+2. Perhatikan batas rate-limit dan gunakan timeout/error handling.
+3. WebSocket harus melakukan cleanup saat komponen unmount dan membatasi reconnect dengan backoff.
+4. Timestamp disimpan/ditangani dengan zona waktu yang eksplisit; tampilan lokal boleh mengikuti zona waktu pengguna.
+5. Harga, candle, berita, dan indikator harus menampilkan status stale/loading/error jika relevan.
+6. Jangan menyebut data tertunda sebagai real-time atau menampilkan data simulasi tanpa label.
 
-COPY . .
-RUN npm run build
+Lihat [dokumen arsitektur](docs/ARCHITECTURE.md) dan [roadmap](docs/ROADMAP.md).
 
-EXPOSE 3000
-CMD ["npm", "start"]
-```
+## Sumber data dan batasan
 
-Build & run:
+- **Binance API**: data pasar crypto publik; ketersediaan dan rate limit mengikuti kebijakan Binance.
+- **TradingView widgets**: embed/visualisasi yang tunduk pada syarat dan kemampuan widget.
+- **World Bank API**: indikator ekonomi historis sesuai cakupan dataset.
+- **RSS publisher**: feed dapat berubah, tidak tersedia, atau membatasi akses.
 
-```bash
-docker build -t zabrina-alpha .
-docker run -p 3000:3000 zabrina-alpha
-```
+Sumber-sumber tersebut tidak menjamin semua pasar global, data tick, fundamental, atau berita akan tersedia secara seragam. Integrasi perlu diuji dan setiap tampilan harus menunjukkan sumber data yang benar. Jangan melakukan scraping atau redistribusi yang melanggar syarat layanan sumber.
 
-### Manual VPS
+## Keamanan
 
-```bash
-# Clone
-git clone https://github.com/your-username/zabrina-alpha-terminal.git
-cd zabrina-alpha-terminal
+- Jangan menyimpan secrets di repository atau mengirimkannya ke browser.
+- Validasi dan batasi parameter endpoint; hindari proxy URL arbitrer yang membuka risiko SSRF.
+- Jangan merender HTML dari feed berita tanpa sanitasi.
+- Terapkan batas request, timeout, dan cache yang sesuai untuk endpoint server.
+- Laporkan kerentanan secara privat sesuai [SECURITY.md](SECURITY.md).
 
-# Install
-npm ci
+## Roadmap
 
-# Build
-npm run build
+- [x] Fondasi Next.js App Router dan TypeScript
+- [x] Halaman utama dan route modul awal
+- [x] Fondasi chart workspace
+- [ ] Konsistensi loading/error/empty states pada seluruh modul
+- [ ] Pengujian unit untuk parser dan adapter data
+- [ ] Validasi skema untuk respons API eksternal
+- [ ] Observabilitas, rate-limit handling, dan fallback data yang transparan
+- [ ] Riset AI dengan sitasi sumber dan label ketidakpastian
+- [ ] Analitik portofolio dan risiko dengan metodologi yang terdokumentasi
+- [ ] Cakupan multi-aset lebih luas berdasarkan integrasi resmi yang tersedia
 
-# Run dengan PM2
-npm install -g pm2
-pm2 start npm --name "zabrina-alpha" -- start
-pm2 save
-pm2 startup
-```
+Roadmap bukan klaim bahwa fitur tersebut sudah tersedia. Status akan diperbarui saat implementasi dan pengujian selesai.
 
----
+## Kontribusi
 
-## ❓ FAQ
+1. Buat branch fitur dari `main`.
+2. Buat perubahan sekecil mungkin dan jelaskan alasan teknisnya.
+3. Tambahkan atau perbarui pengujian bila mengubah logika data.
+4. Jalankan `npm run lint`, `npm run typecheck`, dan `npm run build`.
+5. Jangan commit secrets, file hasil build, atau data pasar yang disalin tanpa izin.
+6. Buka pull request dengan ringkasan, hasil pengujian, screenshot bila mengubah UI, dan sumber data yang digunakan.
 
-### Kenapa kalender ekonomi kosong?
+Baca [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Kalau upstream TradingView memblokir request, API akan fallback ke data statis (50 negara). Cek DevTools → Network → response header `X-Data-Source`:
-- `live` → berhasil fetch dari TradingView
-- `cache` → dari cache (1 menit)
-- `stale` → cache lama (upstream gagal)
-- `fallback` → data statis
+## Disclaimer
 
-### Chart TradingView tidak muncul?
+Zabrina Alpha Terminal adalah perangkat lunak informasi dan riset, bukan penasihat keuangan. Data dapat tertunda, tidak lengkap, atau salah. Analisis AI dan indikator tidak menjamin hasil, tidak merupakan rekomendasi membeli/menjual, dan tidak menggantikan penilaian independen. Selalu verifikasi data pada sumber primer dan kelola risiko Anda sendiri.
 
-TradingView Widget butuh:
-1. **Koneksi internet** — Widget fetch dari `s3.tradingview.com`
-2. **Browser modern** — Support iframe + postMessage
-3. **Domain tidak di-blacklist** — Kalau pakai ad-blocker, whitelist `tradingview.com`
+## Lisensi
 
-### Berita kosong untuk kategori tertentu?
-
-Beberapa sumber RSS mati/berubah URL. Cek log terminal:
-```
-[News] Gagal CoinGecko: HTTP 403
-[News] Berhasil: 73, Gagal: 15, Total item: 3563
-```
-
-Kalau banyak yang gagal, edit `lib/news/sources.ts` — update URL atau hapus sumber mati.
-
-### Bagaimana cara menambahkan simbol ke watchlist?
-
-Edit `components/chart/symbols.ts`:
-
-```ts
-export const SYMBOLS: Symbol[] = [
-    { id: 'BTCUSDT', ticker: 'BTC/USDT', name: 'Bitcoin', category: 'crypto' },
-    // Tambahkan di sini
-    { id: 'ARBUSDT', ticker: 'ARB/USDT', name: 'Arbitrum', category: 'crypto' },
-];
-```
-
-### Kenapa error "Cannot listen to the event from the provided iframe"?
-
-Error ini non-fatal dari TradingView Widget. Sudah di-fix di `PriceChart.tsx` dan `EconomicMap.tsx` dengan cleanup yang benar (`removeChild` bukan `innerHTML = ''`).
-
-### Bagaimana cara ganti nama brand "ZABRINA ALPHA"?
-
-Cari & ganti string di seluruh project:
-
-```bash
-# Linux/macOS
-grep -rl "ZABRINA ALPHA" --include="*.tsx" --include="*.ts" | xargs sed -i 's/ZABRINA ALPHA/NAMA BARU/g'
-
-# Windows PowerShell
-Get-ChildItem -Recurse -Include *.tsx,*.ts | ForEach-Object {
-    (Get-Content $_.FullName) -replace 'ZABRINA ALPHA','NAMA BARU' | Set-Content $_.FullName
-}
-```
-
-File yang perlu diubah:
-- `components/Navbar.tsx`
-- `components/Footer.tsx`
-- `app/page.tsx`
-- `app/layout.tsx` (metadata)
-- `README.md`
-
----
-
-## 📄 Lisensi
-
-MIT License — bebas digunakan untuk project pribadi maupun komersial.
-
-```
-Copyright (c) 2026 ZABRINA ALPHA
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## ⚠️ Disclaimer
-
-**Data yang disajikan di ZABRINA ALPHA TERMINAL bersifat informatif dan bukan merupakan nasihat investasi.**
-
-Trading forex, komoditas, crypto, dan instrumen keuangan lainnya memiliki **tingkat risiko tinggi** dan dapat mengakibatkan kerugian melebihi modal Anda. Selalu lakukan riset mandiri dan konsultasikan dengan penasihat keuangan yang berlisensi sebelum mengambil keputusan trading.
-
-Semua data diambil dari sumber publik (TradingView, World Bank, Binance, RSS) dan disajikan apa adanya (**as is**). Kami tidak menjamin akurasi, kelengkapan, atau ketepatan waktu data.
-
----
-
-## 🤝 Kontribusi
-
-Kontribusi selalu diterima! Silakan:
-
-1. Fork repository
-2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buka Pull Request
-
-### Aturan Kontribusi
-
-- Ikuti **Conventional Commits** (`feat:`, `fix:`, `docs:`, dll.)
-- Jalankan `npm run lint` sebelum commit
-- Tambahkan tests jika mengubah logika bisnis
-- Update dokumentasi jika menambah fitur
-
----
-
-## 📞 Kontak & Support
-
-- **Issues**: [GitHub Issues](https://github.com/your-username/zabrina-alpha-terminal/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/zabrina-alpha-terminal/discussions)
-- **Email**: support@zabrina-alpha.terminal
-
----
-
-<div align="center">
-
-**⚡ ZABRINA ALPHA TERMINAL**
-
-Built with ❤️ using Next.js 16 + TypeScript + Tailwind CSS v4
-
-*Pantau semua. Trade smarter.*
-
-</div>
+Distribusi menggunakan MIT License jika file `LICENSE` di repository menyatakan demikian. Periksa lisensi dan ketentuan setiap layanan/data pihak ketiga secara terpisah.
