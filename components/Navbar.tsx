@@ -8,6 +8,7 @@ const NAV_LINKS = [
     { href: '/', label: 'Home', icon: 'fa-house' },
     { href: '/economic-calendar', label: 'Kalender Ekonomi', icon: 'fa-calendar-alt' },
     { href: '/chart', label: 'Chart', icon: 'fa-chart-line' },
+    { href: '/meme-coins', label: 'Meme Coin Scanner', icon: 'fa-coins' },
     { href: '/news', label: 'Berita', icon: 'fa-newspaper' },
 ];
 
