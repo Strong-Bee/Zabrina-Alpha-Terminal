@@ -1,78 +1,89 @@
 # Roadmap Zabrina Alpha Terminal
 
-Produk ini berfokus pada **crypto trading dan meme coin intelligence**. Checklist berikut adalah rencana; item hanya boleh ditandai selesai setelah implementasi dan verifikasi.
+Zabrina Alpha Terminal dikembangkan sebagai **crypto trading terminal dengan fokus khusus pada meme coin**. Urutan berikut menekankan integritas data dan fondasi sebelum analitik berisiko tinggi. Checklist adalah rencana, bukan klaim fitur sudah selesai.
 
-## P0 — Stabilitas dan integritas data
+## P0 — Stabilitas dan kualitas
 
-- [ ] Jalankan CI untuk push dan pull request.
-- [ ] Lulus ESLint, TypeScript, dan production build.
-- [ ] Audit halaman serta endpoint yang sudah ada.
-- [ ] Tambahkan unit tests untuk parser dan adapter.
-- [ ] Konsistenkan loading, error, empty, stale, dan demo states.
-- [ ] Validasi input serta batasi request ke provider.
+- [ ] Jalankan lint, TypeScript typecheck, dan production build pada CI.
+- [ ] Audit halaman, route handler, dan dependency yang sudah ada.
+- [ ] Tambahkan unit test untuk normalisasi data dan provider adapter.
+- [ ] Konsistenkan loading, error, empty, stale, serta demo states.
+- [ ] Validasi query, simbol, timeframe, chain, dan alamat token.
+- [ ] Terapkan timeout, rate limit, cache, dan error mapping.
 
-**Kriteria selesai:** data gagal tidak diganti diam-diam oleh angka contoh; status sumber dan error terlihat jelas.
+**Kriteria selesai:** CI hijau pada commit terkait dan kegagalan provider tidak menghasilkan angka palsu.
 
 ## P1 — Crypto market terminal
 
-- [ ] Default chart `BTCUSDT / 4H`.
-- [ ] Verifikasi historis candle hingga target 600 candle sesuai batas provider.
-- [ ] Perbaiki reconnect WebSocket, backoff, dan cleanup.
-- [ ] Pastikan watchlist menampilkan harga, perubahan, volume, dan timestamp dari sumber yang sama.
-- [ ] Tambahkan normalisasi simbol dan validasi timeframe.
-- [ ] Dokumentasikan perbedaan data spot dan perpetual.
+- [ ] Jadikan BTCUSDT 4H sebagai default chart dan dokumentasikan pilihan timeframe.
+- [ ] Verifikasi candle historis, batas request, urutan timestamp, serta duplicate handling.
+- [ ] Perbaiki WebSocket reconnect, exponential backoff, dan cleanup.
+- [ ] Konsistenkan ticker watchlist: harga, perubahan, volume, provider, dan timestamp.
+- [ ] Validasi simbol yang tidak didukung dan bedakan data spot/perpetual.
+- [ ] Tambahkan market overview untuk aset kripto yang benar-benar didukung provider.
 
-**Kriteria selesai:** pergantian simbol/timeframe tidak meninggalkan koneksi lama; candle berurutan dan tidak duplikat.
+**Kriteria selesai:** pergantian simbol/timeframe tidak meninggalkan koneksi lama dan data memiliki status freshness yang jelas.
 
-## P2 — Meme coin scanner, prioritas Solana
+## P2 — Solana-first meme coin scanner
 
-- [ ] Integrasi sumber pair/token yang dapat diverifikasi.
-- [ ] Filter berdasarkan umur pair, liquidity, volume, transaksi, perubahan harga, dan market cap/FDV jika tersedia.
-- [ ] Identifikasi token menggunakan chain + mint/contract address, bukan simbol saja.
-- [ ] Tambahkan deteksi data stale, pair duplikat, serta token metadata yang tidak lengkap.
-- [ ] Tampilkan alasan sebuah token masuk hasil scanner dan sumber metriknya.
-- [ ] Tambahkan filter risiko tanpa mengklaim hasilnya menjamin keamanan.
+- [x] Buat halaman awal scanner dan route API menggunakan data DEX Screener.
+- [x] Tambahkan filter likuiditas, volume 24 jam, umur pair, jumlah transaksi, dan sorting.
+- [x] Tampilkan alamat token, pair, metrik utama, link sumber, dan indikator awal.
+- [ ] Tambahkan test untuk provider error, data malformed, pair duplikat, dan filter boundary.
+- [ ] Perbaiki pemilihan kandidat agar lebih tahan terhadap token profil yang tidak memiliki pair.
+- [ ] Tambahkan refresh strategy, status freshness, dan batas rate provider yang terdokumentasi.
+- [ ] Tambahkan filter chain/address, pencarian token, dan detail pair.
 
-**Kriteria selesai:** hasil scanner memiliki alamat kanonis, chain, provider, timestamp, dan metrik dengan definisi yang terdokumentasi.
+**Kriteria selesai:** setiap hasil memiliki chain, mint address, pair address, provider, timestamp, serta metrik dengan definisi yang jelas. Checkbox implementasi awal tidak berarti audit keamanan lengkap.
 
-## P3 — Token risk research
+## P3 — Token safety research
 
-- [ ] Periksa likuiditas dan perubahan likuiditas jika data tersedia.
-- [ ] Periksa konsentrasi holder dengan klasifikasi pool/burn/locker yang dapat ditelusuri.
-- [ ] Tambahkan pemeriksaan khusus chain; bedakan Solana dan EVM.
-- [ ] Laporkan status `pass`, `warning`, `fail`, atau `unknown` beserta alasan.
-- [ ] Tambahkan tautan explorer untuk temuan on-chain.
+- [ ] Periksa mint/freeze authority Solana jika RPC/provider mendukung.
+- [ ] Tambahkan analisis konsentrasi holder dan klasifikasi pool/burn/locker yang dapat diverifikasi.
+- [ ] Tambahkan pemeriksaan likuiditas dan perubahan pool.
+- [ ] Buat risk findings dengan status pass, warning, fail, dan unknown.
+- [ ] Tambahkan tautan explorer dan bukti untuk setiap temuan.
+- [ ] Bedakan aturan Solana dari aturan EVM.
 
-**Kriteria selesai:** data yang tidak tersedia tidak pernah diperlakukan sebagai bukti keamanan.
+**Kriteria selesai:** data hilang atau pemeriksaan gagal tidak pernah disimpulkan sebagai aman.
 
-## P4 — Wallet dan whale intelligence
+## P4 — On-chain wallet intelligence
 
-- [ ] Watchlist wallet lintas jaringan.
-- [ ] Timeline aktivitas wallet dan tautan transaksi explorer.
-- [ ] Identifikasi early buyers dengan definisi waktu yang jelas.
-- [ ] Kalkulasi PnL dengan harga historis, biaya, transfer, dan token yang tidak dapat dihargai.
-- [ ] Pisahkan realized PnL, unrealized PnL, dan estimasi.
-- [ ] Tandai hasil incomplete jika histori tidak memadai.
+- [ ] Watchlist wallet berdasarkan chain dan alamat.
+- [ ] Timeline transaksi dengan tautan explorer.
+- [ ] Early buyer dan whale tracking dengan definisi waktu dan metodologi jelas.
+- [ ] Kalkulasi realized/unrealized PnL, fee, transfer, bridge, airdrop, dan token tanpa harga.
+- [ ] Tandai data incomplete serta keterbatasan atribusi.
+- [ ] Tambahkan alert aktivitas wallet dengan kontrol noise.
 
-**Kriteria selesai:** klaim profitable wallet dapat direproduksi dari transaksi dan asumsi yang terdokumentasi.
+**Kriteria selesai:** analisis wallet dapat direproduksi dari transaksi, sumber, periode, dan asumsi yang terdokumentasi.
 
-## P5 — Trading intelligence dan risk management
+## P5 — Trading analytics dan risk management
 
-- [ ] Indikator teknikal serta struktur pasar.
-- [ ] Alert harga, volume, volatilitas, dan scanner.
+- [ ] Indikator teknikal dan struktur pasar.
+- [ ] Alert harga, volume, volatilitas, dan kondisi scanner.
 - [ ] Portfolio, jurnal, exposure, drawdown, dan risk/reward.
-- [ ] Paper trading sebelum mempertimbangkan live execution.
-- [ ] AI research dengan sumber, timestamp, dan pemisahan fakta/inferensi.
+- [ ] Paper trading dengan fee/slippage model yang dijelaskan.
+- [ ] AI research yang menyertakan sumber dan memisahkan fakta dari inferensi.
+- [ ] Backtesting dengan data historis, biaya, dan bias yang terdokumentasi.
 
-**Kriteria selesai:** metrik dan alert dapat diuji; tidak ada klaim profit terjamin.
+**Kriteria selesai:** hasil analisis bisa diuji dan tidak ada klaim profit yang dijamin.
 
-## P6 — Ekspansi provider dan jaringan
+## P6 — Provider dan ekspansi chain
 
-- [ ] Evaluasi DEX analytics API, blockchain RPC/indexer, dan explorer untuk kebutuhan nyata.
-- [ ] Perluas dukungan chain setelah identitas token, rate limits, dan kualitas data diuji.
-- [ ] Tambahkan data derivatif seperti funding/open interest hanya melalui provider yang sesuai.
-- [ ] Dokumentasikan biaya, kuota, lisensi, dan fallback tiap provider.
+- [ ] Evaluasi DEX analytics, RPC/indexer, explorer, dan news providers.
+- [ ] Dokumentasikan rate limit, biaya, lisensi, dan reliability.
+- [ ] Tambahkan jaringan baru setelah kontrak data dan identitas token diuji.
+- [ ] Tambahkan derivatif seperti funding/open interest hanya dari provider yang sesuai.
+
+## P7 — Persiapan produksi
+
+- [ ] Tambahkan observability dan error reporting tanpa secret.
+- [ ] Audit dependency, rate limiting, dan keamanan route handler.
+- [ ] Uji beban serta skenario provider outage.
+- [ ] Dokumentasikan deployment, environment, backup, dan rollback.
+- [ ] Tinjau aksesibilitas, responsivitas, dan performa halaman.
 
 ## Aturan rilis
 
-Jangan menyatakan fitur production-ready, real-time, atau akurat sebelum diuji. Setiap fitur perlu dokumentasi sumber data, freshness, batasan, pengujian, serta perilaku saat provider gagal.
+Fitur hanya ditandai selesai setelah implementasi diverifikasi melalui test atau demonstrasi yang dapat direproduksi. Jangan menyebut fitur live, akurat, aman, atau production-ready tanpa bukti yang sesuai.
