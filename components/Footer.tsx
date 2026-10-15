@@ -114,7 +114,7 @@ export default function Footer() {
                     <div className="lg:col-span-7 lg:pl-10">
                         <div className="border-gradient rounded-2xl p-6">
                             <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-za-accent">
-                                // Market Newsletter
+                                Market Newsletter
                             </div>
                             <h3 className="mb-2 text-lg font-semibold text-white">
                                 Dapatkan insight pasar mingguan
