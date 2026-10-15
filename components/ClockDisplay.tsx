@@ -16,9 +16,12 @@ export default function ClockDisplay({
     const [now, setNow] = useState<Date | null>(null);
 
     useEffect(() => {
-        setNow(new Date());
-        const id = setInterval(() => setNow(new Date()), 1000);
-        return () => clearInterval(id);
+        const initial = window.setTimeout(() => setNow(new Date()), 0);
+        const id = window.setInterval(() => setNow(new Date()), 1000);
+        return () => {
+            window.clearTimeout(initial);
+            window.clearInterval(id);
+        };
     }, []);
 
     // Placeholder saat SSR — hindari hydration mismatch
