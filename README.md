@@ -29,6 +29,7 @@ Zabrina Alpha Terminal dikembangkan sebagai workspace riset **khusus cryptocurre
 - [Arsitektur data](#arsitektur-data)
 - [Prinsip market data](#prinsip-market-data)
 - [Rencana scanner meme coin](#rencana-scanner-meme-coin)
+- [Menggunakan Solana Meme Coin Scanner](#menggunakan-solana-meme-coin-scanner)
 - [Kerangka analisis risiko token](#kerangka-analisis-risiko-token)
 - [On-chain dan wallet intelligence](#on-chain-dan-wallet-intelligence)
 - [Keamanan](#keamanan)
@@ -136,7 +137,7 @@ Pengembangan berikutnya dapat mencakup berita aset kripto, pengumuman protokol, 
 | Next.js App Router, React, TypeScript, Tailwind | Fondasi stack proyek |
 | Halaman chart dan komponen chart/watchlist | Sudah ada di repository; detail perilaku tetap perlu diverifikasi lewat aplikasi dan pengujian |
 | Data ticker Binance Vision | Terdapat jalur ticker yang digunakan watchlist; reliabilitas dan cakupan perlu diverifikasi |
-| Scanner meme coin Solana | Roadmap; jangan dianggap selesai sebelum integrasi dan UI tersedia |
+| Solana Meme Coin Scanner | Implementasi awal tersedia di `/meme-coins` dan `/api/meme-coins`; perlu validasi runtime/CI dan pengembangan risk checks lanjutan |
 | Token risk engine | Roadmap |
 | Wallet PnL/whale intelligence | Roadmap |
 | Alert, paper trading, portfolio | Roadmap |
@@ -279,6 +280,14 @@ Lihat [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) untuk rancangan lebih lengkap
 10. **Tidak menyamakan metrik:** market cap, FDV, liquidity, dan volume mengukur hal yang berbeda.
 
 Untuk Binance, rujuk [dokumentasi resmi Binance Developers](https://developers.binance.com/en/docs/introduction) dan dokumentasi endpoint/stream spesifik sebelum membuat integrasi atau mengubah perilaku koneksi.
+
+## Menggunakan Solana Meme Coin Scanner
+
+Buka route [`/meme-coins`](https://github.com/Strong-Bee/Zabrina-Alpha-Terminal/tree/main/app/meme-coins) saat aplikasi berjalan. Scanner mengambil profil token terbaru dari DEX Screener, meminta data pair Solana secara batch, lalu menerapkan filter likuiditas, volume 24 jam, umur pair, jumlah transaksi, dan pengurutan.
+
+Default filter: likuiditas minimum US$5.000, volume 24 jam minimum US$10.000, umur pair maksimum 168 jam, dan minimal 20 transaksi 24 jam. Angka ini adalah filter awal yang bisa diubah, bukan standar keamanan. Endpoint backend tersedia di `/api/meme-coins`; provider dapat membatasi data atau gagal sementara. Scanner menampilkan error jika pengambilan data gagal dan tidak mengarang data pengganti.
+
+Hasil yang muncul adalah **kandidat pair dari profil token terbaru**, bukan klasifikasi pasti meme coin. Indikator risiko di UI bersifat heuristik sederhana; belum menggantikan audit kontrak, analisis holder, pemeriksaan authority, atau simulasi transaksi.
 
 ## Rencana scanner meme coin
 
