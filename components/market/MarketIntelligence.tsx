@@ -100,7 +100,7 @@ export default function MarketIntelligence({ mode }: { mode: 'screener' | 'radar
       const response = await fetch('/api/ai/market-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode, rows: rows.slice(0, 20) }),
+        body: JSON.stringify({ mode, rows: (mode === 'radar' ? radarRows : rows.slice(0, 20)) }),
       });
       const payload = await response.json() as AnalysisResponse;
       if (!response.ok) throw new Error(payload.error || 'Analisis AI gagal.');
